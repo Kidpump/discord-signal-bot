@@ -1,4 +1,4 @@
-import discord
+import selfcord
 import requests
 import os
 
@@ -7,7 +7,7 @@ CHANNEL_ID = int(os.environ["CHANNEL_ID"])
 TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
-client = discord.Client(intents=discord.Intents.all())
+client = selfcord.Client()
 
 @client.event
 async def on_ready():
