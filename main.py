@@ -22,8 +22,20 @@ def on_message(ws, message):
         msg = data["d"]
         if str(msg["channel_id"]) == CHANNEL_ID:
             content = msg.get("content", "")
+            attachments = msg.get("attachments", [])
+
+            # Text weiterleiten
             if content:
                 send_telegram(f"🚨 Neues Trading Signal:\n\n{content}")
+
+            # Bilder weiterleiten
+            for attachment in attachments:
+                image_url = attachment.get("url", "")
+                if image_url:
+                    requests.post(
+                        f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto",
+                        data={"chat_id": TELEGRAM_CHAT_ID, "photo": image_url}
+                    )
 
 def heartbeat(ws, interval):
     while True:
@@ -60,7 +72,7 @@ def start():
         on_error=on_error,
         on_close=on_close
     )
-    
+
     def on_hello(ws, message):
         data = json.loads(message)
         if data["op"] == 10:
@@ -69,7 +81,7 @@ def start():
             t.daemon = True
             t.start()
         on_message(ws, message)
-    
+
     ws.on_message = on_hello
     ws.run_forever()
 
